@@ -53,13 +53,13 @@
 
                 <li class="nav-item">
 
-                    <a class="nav-link" href="#">Blog</a>
+                    <a class="nav-link" href="{{ route('article.index') }}">Blog</a>
 
                 </li>
 
                 <li class="nav-item">
 
-                    <a class="nav-link" href="#">Category</a>
+                    <a class="nav-link" href="{{ route('category.index') }}">Category</a>
 
                 </li>
 
@@ -81,13 +81,13 @@
 
                     <li class="nav-item">
 
-                        <a class="nav-link" href="#">Create New Post</a>
+                        <a class="nav-link" href="{{ route('article.create') }}">Create New Post</a>
 
                     </li>
 
                     <li class="nav-item">
 
-                        <a class="nav-link" href="#">Create New Category</a>
+                        <a class="nav-link" href="{{ route('category.create') }}">Create New Category</a>
 
                     </li>
 
@@ -111,7 +111,9 @@
         </div>
 
     </nav>
-
+    @if(Session::get('message'))
+        {{Session::get('message')}}
+    @endif
         <main class="py-4">
             @yield('content')
         </main>

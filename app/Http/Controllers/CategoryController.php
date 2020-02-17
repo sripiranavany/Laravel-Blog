@@ -2,11 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Article;
 use App\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class CategoryController extends Controller
 {
+    /**
+     * Instantiate a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth')->except(['index','show']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +27,9 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::get();
+
+        return view('categories.index',['categories' => $categories]);
     }
 
     /**
@@ -24,7 +39,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('categories.add');
     }
 
     /**
@@ -35,7 +50,12 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = Auth::user();
+        Category::create([
+            'name' => $request->name,
+            'user_id' => $user->id
+        ]);
+        return Redirect::to('category');
     }
 
     /**
@@ -46,7 +66,8 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        $articles = Article::where('category','=',$category->id)->get();
+        return view('articles.index',['articles' => $articles]);
     }
 
     /**
@@ -80,6 +101,12 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $article = Article::where('category','=',$category->id)->get();
+        if (count($article)) {
+            return back()->with('message','This Category is in use. You cant delete this');
+        } else {
+            $category->delete();
+            return Redirect::to('category');
+        }
     }
 }
